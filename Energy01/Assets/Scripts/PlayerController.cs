@@ -10,7 +10,7 @@ namespace Energy
         public float walkSpeed = 8f;
         public float jumpSpeed = 7f;
         public float jumpTime = 0.5f;
-
+        public float increaseGravity; 
 
 
         private Rigidbody rb;
@@ -43,10 +43,10 @@ namespace Energy
             float distance = walkSpeed * Time.deltaTime;
 
             float hAxis = Input.GetAxis("Horizontal");
-            float vAxis = Input.GetAxis("Vertical");
+            //float vAxis = Input.GetAxis("Vertical");
 
             // Movement vector
-            Vector3 movement = new Vector3(hAxis * distance, 0f, vAxis * distance);
+            Vector3 movement = new Vector3(hAxis * distance, 0f, /*vAxis * distance*/0);
 
             Vector3 currPosition = transform.position;
 
@@ -63,38 +63,42 @@ namespace Energy
                 if (!pressedJump && isGrounded)
                 {
                     pressedJump = true;
-                    StartCoroutine(Jump());
-                    //Vector3 jumpVector = new Vector3(0f, jumpSpeed, 0f);
-                    //rb.velocity = rb.velocity + jumpVector;
+                    //StartCoroutine(Jump());
+                    Vector3 jumpVector = new Vector3(0f, jumpSpeed, 0f);
+                    rb.velocity = rb.velocity + jumpVector;
                 }
             }
             else
             {
                 pressedJump = false;
             }
+            if (rb.velocity.y < 0)
+                rb.velocity += Vector3.up * Physics.gravity.y * (increaseGravity - 1) * Time.deltaTime; 
         }
 
-        IEnumerator Jump()
-        {
-            rb.velocity = Vector3.zero;
-            float timer = 0;
-            float jAxis = Input.GetAxis("Jump");
+        //IEnumerator Jump()
+        //{
+        //    rb.velocity = Vector3.zero;
+        //    float timer = 0;
+        //    float jAxis = Input.GetAxis("Jump");
            
-            while (jAxis > 0f && timer < jumpTime)
-            {
-                //Calculate how far through the jump we are as a percentage
-                //apply the full jump force on the first frame, then apply less force
-                //each consecutive frame
-                Vector3 jumpVector = new Vector3(0f, jumpSpeed, 0f);
-                float proportionCompleted = timer / jumpTime;
-                Vector3 thisFrameJumpVector = Vector3.Lerp(jumpVector, Vector3.zero, proportionCompleted);
-                rb.AddForce(thisFrameJumpVector);
-                timer += Time.deltaTime;
-                yield return null;
-            }
+        //    while (jAxis > 0f && timer < jumpTime)
+        //    {
+        //        //Calculate how far through the jump we are as a percentage
+        //        //apply the full jump force on the first frame, then apply less force
+        //        //each consecutive frame
+        //        Vector3 jumpVector = new Vector3(0f, jumpSpeed, 0f);
 
-            pressedJump = false;
-        }
+        //        //Physics.gravity = new Vector3(0, Physics.gravity.y * 2);
+        //        float proportionCompleted = timer / jumpTime;
+        //        Vector3 thisFrameJumpVector = Vector3.Lerp(jumpVector, Vector3.zero, proportionCompleted);
+        //        rb.AddForce(thisFrameJumpVector);
+        //        timer += Time.deltaTime;
+        //        yield return null;
+        //    }
+
+        //    pressedJump = false;
+        //}
 
         bool CheckGrounded()
         {
