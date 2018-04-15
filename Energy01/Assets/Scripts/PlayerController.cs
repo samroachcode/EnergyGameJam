@@ -9,13 +9,23 @@ namespace Energy
 
         public float walkSpeed = 8f;
         public float jumpSpeed = 7f;
-        public float jumpTime = 0.5f;
+        //public float jumpTime = 0.5f;
         public float increaseGravity; 
 
 
         private Rigidbody rb;
         private Collider thisCollider; 
+
         private bool pressedJump;
+
+        private float distance;
+        private float hAxis;
+
+        private Vector3 movement;
+        private Vector3 currPosition;
+        private Vector3 newPosition;
+        private Vector3 currentVelocity; 
+
 
         void Start()
         {
@@ -24,37 +34,32 @@ namespace Energy
             thisCollider = GetComponent<Collider>();
         }
 
-        void Update()
+        private void Update()
         {
-            WalkHandler();
-            JumpHandler();
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                Debug.Log("space pressed");
-            }
+            
         }
 
-        void WalkHandler()
+        void FixedUpdate()
         {
-            // Set x and z velocities to zero
+            Walk();
+            Jump();
+            CollisionCheck();
+        }
+
+        private void Walk()
+        {
             rb.velocity = new Vector3(0, rb.velocity.y, 0);
-
             // Distance ( speed = distance / time --> distance = speed * time)
-            float distance = walkSpeed * Time.deltaTime;
-
-            float hAxis = Input.GetAxis("Horizontal");
-            //float vAxis = Input.GetAxis("Vertical");
-
+            distance = walkSpeed * Time.deltaTime;
+            hAxis = Input.GetAxis("Horizontal");
             // Movement vector
-            Vector3 movement = new Vector3(hAxis * distance, 0f, /*vAxis * distance*/0);
-
-            Vector3 currPosition = transform.position;
-
-            Vector3 newPosition = currPosition + movement;
+            movement = new Vector3(hAxis * distance, 0f, 0);
+            currPosition = transform.position;
+            newPosition = currPosition + movement;
             rb.MovePosition(newPosition);
         }
 
-        void JumpHandler()
+        private void Jump()
         {
             float jAxis = Input.GetAxis("Jump");
             bool isGrounded = CheckGrounded();
@@ -63,7 +68,6 @@ namespace Energy
                 if (!pressedJump && isGrounded)
                 {
                     pressedJump = true;
-                    //StartCoroutine(Jump());
                     Vector3 jumpVector = new Vector3(0f, jumpSpeed, 0f);
                     rb.velocity = rb.velocity + jumpVector;
                 }
@@ -75,30 +79,6 @@ namespace Energy
             if (rb.velocity.y < 0)
                 rb.velocity += Vector3.up * Physics.gravity.y * (increaseGravity - 1) * Time.deltaTime; 
         }
-
-        //IEnumerator Jump()
-        //{
-        //    rb.velocity = Vector3.zero;
-        //    float timer = 0;
-        //    float jAxis = Input.GetAxis("Jump");
-           
-        //    while (jAxis > 0f && timer < jumpTime)
-        //    {
-        //        //Calculate how far through the jump we are as a percentage
-        //        //apply the full jump force on the first frame, then apply less force
-        //        //each consecutive frame
-        //        Vector3 jumpVector = new Vector3(0f, jumpSpeed, 0f);
-
-        //        //Physics.gravity = new Vector3(0, Physics.gravity.y * 2);
-        //        float proportionCompleted = timer / jumpTime;
-        //        Vector3 thisFrameJumpVector = Vector3.Lerp(jumpVector, Vector3.zero, proportionCompleted);
-        //        rb.AddForce(thisFrameJumpVector);
-        //        timer += Time.deltaTime;
-        //        yield return null;
-        //    }
-
-        //    pressedJump = false;
-        //}
 
         bool CheckGrounded()
         {
@@ -123,6 +103,12 @@ namespace Energy
             // If any corner is grounded, the object is grounded
             return (grounded1 || grounded2 || grounded3 || grounded4);
         }
-        
+
+        private void CollisionCheck()
+        {
+            currentVelocity = rb.velocity;
+            
+        }
+
     }
 }
