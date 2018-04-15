@@ -1059,7 +1059,14 @@ Prefab:
       propertyPath: walkSpeed
       value: 5
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 114496406846825242, guid: a84f69ae78d992249b09fdab1542d56c,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 114950121992357746, guid: a84f69ae78d992249b09fdab1542d56c, type: 2}
+    - {fileID: 114686604772988158, guid: a84f69ae78d992249b09fdab1542d56c, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: a84f69ae78d992249b09fdab1542d56c, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &1774517964

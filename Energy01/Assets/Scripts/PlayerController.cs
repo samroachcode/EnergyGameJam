@@ -9,7 +9,6 @@ namespace Energy
 
         public float walkSpeed = 8f;
         public float jumpSpeed = 7f;
-        //public float jumpTime = 0.5f;
         public float increaseGravity; 
 
 
@@ -24,8 +23,6 @@ namespace Energy
         private Vector3 movement;
         private Vector3 currPosition;
         private Vector3 newPosition;
-        private Vector3 currentVelocity; 
-
 
         void Start()
         {
@@ -43,7 +40,6 @@ namespace Energy
         {
             Walk();
             Jump();
-            CollisionCheck();
         }
 
         private void Walk()
@@ -52,7 +48,6 @@ namespace Energy
             // Distance ( speed = distance / time --> distance = speed * time)
             distance = walkSpeed * Time.deltaTime;
             hAxis = Input.GetAxis("Horizontal");
-            // Movement vector
             movement = new Vector3(hAxis * distance, 0f, 0);
             currPosition = transform.position;
             newPosition = currPosition + movement;
@@ -104,11 +99,13 @@ namespace Energy
             return (grounded1 || grounded2 || grounded3 || grounded4);
         }
 
-        private void CollisionCheck()
+        private void OnCollisionEnter(Collision collision)
         {
-            currentVelocity = rb.velocity;
-            
+            bool isGrounded = CheckGrounded();
+            if (!isGrounded)
+            {
+                rb.velocity = Vector3.zero;
+            }
         }
-
     }
 }
